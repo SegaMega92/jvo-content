@@ -21,16 +21,24 @@ html, body {
   position: relative;
   width: {{outputWidth}}px;
   height: {{outputHeight}}px;
-  background: {{accentColor}}22;
   overflow: hidden;
   font-family: 'DM Sans', sans-serif;
 }
+
+/* z-index слои:
+   1 — фон
+   2 — акцентная полоса
+   3 — заголовок + характеристики (ЗА моделью)
+   4 — фото модели (НАД текстом)
+   5 — бейджи преимуществ (самый верх)
+*/
 
 /* Бежевый фон */
 .bg {
   position: absolute;
   inset: 0;
   background: #f5eedb;
+  z-index: 1;
 }
 
 /* Вертикальная акцентная полоса слева */
@@ -41,26 +49,10 @@ html, body {
   bottom: 0;
   width: 24px;
   background: {{accentColor}};
+  z-index: 2;
 }
 
-/* Фото товара — серый прямоугольник из Figma */
-.product-photo {
-  position: absolute;
-  left: 268px;
-  top: 73px;
-  width: 632px;
-  height: 1124px;
-  overflow: hidden;
-}
-
-.product-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-/* Контентная область слева */
+/* Заголовок + характеристики — ЗА моделью */
 .content {
   position: absolute;
   left: 0;
@@ -69,35 +61,9 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 30px;
+  z-index: 3;
 }
 
-/* Преимущество №1 — бейдж сверху */
-.advantage-top {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  padding-left: 54px;
-}
-
-.advantage-badge {
-  background: {{accentColor}};
-  padding: 10px 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.advantage-badge span {
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 400;
-  font-size: 25px;
-  color: #000;
-  letter-spacing: -1px;
-  white-space: nowrap;
-  line-height: 1;
-}
-
-/* Заголовок */
 .title-block {
   display: flex;
   align-items: center;
@@ -123,7 +89,6 @@ html, body {
   word-break: break-word;
 }
 
-/* Характеристики */
 .features-block {
   display: flex;
   align-items: flex-start;
@@ -146,21 +111,55 @@ html, body {
   line-height: 1;
 }
 
-/* Нижняя часть акцентной полосы */
-.accent-bar-bottom {
+/* Фото модели — НАД текстом */
+.product-photo {
   position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 24px;
-  top: 61px;
-  /* already covered by .accent-bar, this is just structural */
+  left: 268px;
+  top: 73px;
+  width: 632px;
+  height: 1124px;
+  overflow: hidden;
+  z-index: 4;
 }
 
-/* Преимущество №2 — бейдж снизу справа */
+.product-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Бейджи преимуществ — самый верх */
+.advantage-top {
+  position: absolute;
+  left: 54px;
+  top: 73px;
+  z-index: 5;
+}
+
+.advantage-badge {
+  background: {{accentColor}};
+  padding: 10px 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.advantage-badge span {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  font-size: 25px;
+  color: #000;
+  letter-spacing: -1px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
 .advantage-bottom {
   position: absolute;
   right: 0;
   bottom: 68px;
+  z-index: 5;
 }
 
 .advantage-bottom .advantage-badge {
@@ -170,39 +169,19 @@ html, body {
 </head>
 <body>
 <div class="canvas">
-  <!-- Фон -->
+  <!-- Layer 1: Фон -->
   <div class="bg"></div>
 
-  <!-- Акцентная полоса слева -->
+  <!-- Layer 2: Акцентная полоса -->
   <div class="accent-bar"></div>
 
-  <!-- Фото товара справа -->
-  <div class="product-photo">
-    {{#if cutoutBase64}}
-    <img src="{{cutoutBase64}}" alt="Product">
-    {{else}}
-    <img src="{{originalBase64}}" alt="Product">
-    {{/if}}
-  </div>
-
-  <!-- Контент слева -->
+  <!-- Layer 3: Заголовок + характеристики (ЗА моделью) -->
   <div class="content">
-    <!-- Преимущество №1 -->
-    {{#if advantage1}}
-    <div class="advantage-top">
-      <div class="advantage-badge">
-        <span>{{advantage1}}</span>
-      </div>
-    </div>
-    {{/if}}
-
-    <!-- Заголовок -->
     <div class="title-block">
       <div class="title-bar"></div>
       <div class="title-text">{{title}}</div>
     </div>
 
-    <!-- Характеристики -->
     {{#if features.length}}
     <div class="features-block">
       <div class="features-list">
@@ -214,7 +193,24 @@ html, body {
     {{/if}}
   </div>
 
-  <!-- Преимущество №2 снизу справа -->
+  <!-- Layer 4: Фото модели (НАД текстом) -->
+  <div class="product-photo">
+    {{#if cutoutBase64}}
+    <img src="{{cutoutBase64}}" alt="Product">
+    {{else if originalBase64}}
+    <img src="{{originalBase64}}" alt="Product">
+    {{/if}}
+  </div>
+
+  <!-- Layer 5: Бейджи преимуществ (самый верх) -->
+  {{#if advantage1}}
+  <div class="advantage-top">
+    <div class="advantage-badge">
+      <span>{{advantage1}}</span>
+    </div>
+  </div>
+  {{/if}}
+
   {{#if advantage2}}
   <div class="advantage-bottom">
     <div class="advantage-badge">
