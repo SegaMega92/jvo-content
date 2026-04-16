@@ -25,6 +25,8 @@ export interface ProcessedImage {
 export interface TemplateData {
   title: string;
   subtitle?: string;
+  advantage1?: string;
+  advantage2?: string;
   features: Feature[];
   accentColor: string;
   secondaryColor: string;

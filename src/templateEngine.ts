@@ -63,6 +63,8 @@ export function renderTemplate(templateName: string, data: TemplateData): string
 
 function buildFontFaces(fontsDir: string): string {
   const fonts: Array<{ family: string; weight: string; file: string }> = [
+    { family: 'DM Sans', weight: '400', file: 'DMSans-Regular.ttf' },
+    { family: 'DM Sans', weight: '600', file: 'DMSans-SemiBold.ttf' },
     { family: 'Montserrat', weight: '700', file: 'Montserrat-Bold.ttf' },
     { family: 'Montserrat', weight: '800', file: 'Montserrat-ExtraBold.ttf' },
     { family: 'Montserrat', weight: '900', file: 'Montserrat-Black.ttf' },

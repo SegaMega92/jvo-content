@@ -57,6 +57,8 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
 
     const title = req.body.title || '';
     const subtitle = req.body.subtitle || '';
+    const advantage1 = req.body.advantage1 || '';
+    const advantage2 = req.body.advantage2 || '';
     let features: Feature[] = [];
     try {
       features = req.body.features ? JSON.parse(req.body.features) : [];
@@ -86,6 +88,8 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     const templateData: TemplateData = {
       title,
       subtitle,
+      advantage1,
+      advantage2,
       features,
       accentColor,
       secondaryColor,

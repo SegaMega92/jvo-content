@@ -29,7 +29,7 @@
     margin-bottom: 8px;
   }
 
-  .subtitle {
+  .page-subtitle {
     color: #888;
     font-size: 14px;
     margin-bottom: 36px;
@@ -92,23 +92,6 @@
     border-color: #666;
   }
 
-  .field textarea {
-    resize: vertical;
-    min-height: 80px;
-  }
-
-  .field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .field-row-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
-  }
-
   .color-field {
     display: flex;
     align-items: center;
@@ -151,12 +134,7 @@
     cursor: pointer;
   }
 
-  .upload-icon {
-    font-size: 36px;
-    margin-bottom: 8px;
-    opacity: 0.5;
-  }
-
+  .upload-icon { font-size: 36px; margin-bottom: 8px; opacity: 0.5; }
   .upload-text { font-size: 14px; color: #888; }
   .upload-filename { font-size: 13px; color: #4a9; margin-top: 6px; font-weight: 500; }
 
@@ -171,6 +149,7 @@
   /* Features */
   .features-list { display: flex; flex-direction: column; gap: 8px; }
 
+  /* With icon: icon select + text + remove */
   .feature-row {
     display: grid;
     grid-template-columns: 120px 1fr 36px;
@@ -178,7 +157,16 @@
     align-items: center;
   }
 
-  .feature-row select, .feature-row input {
+  /* Text only: text + remove */
+  .feature-row-text {
+    display: grid;
+    grid-template-columns: 1fr 36px;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .feature-row select, .feature-row input,
+  .feature-row-text input {
     padding: 8px 10px;
     background: #111;
     border: 1px solid #333;
@@ -275,11 +263,7 @@
     font-size: 14px;
   }
 
-  .result-image {
-    width: 100%;
-    border-radius: 10px;
-    display: block;
-  }
+  .result-image { width: 100%; border-radius: 10px; display: block; }
 
   .result-info {
     margin-top: 12px;
@@ -370,12 +354,14 @@
 
   .template-card .name { font-weight: 600; font-size: 13px; margin-bottom: 4px; color: inherit; }
   .template-card .desc { font-size: 11px; color: #666; }
+
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>Генератор инфографик</h1>
-  <p class="subtitle">Создавайте карточки товаров для маркетплейсов</p>
+  <p class="page-subtitle">Создавайте карточки товаров для маркетплейсов</p>
 
   <div class="layout">
     <!-- Left: Form -->
@@ -396,7 +382,7 @@
         <div class="templates-preview" id="templateCards">
           <div class="template-card active" data-value="fashion-model">
             <div class="name">Fashion Model</div>
-            <div class="desc">Текст за моделью</div>
+            <div class="desc">Журнальный стиль</div>
           </div>
           <div class="template-card" data-value="product-features">
             <div class="name">Product Features</div>
@@ -414,19 +400,34 @@
 
         <div class="field">
           <label>Заголовок</label>
-          <input type="text" id="title" placeholder="БЕЛАЯ РУБАШКА" value="БЕЛАЯ РУБАШКА">
+          <input type="text" id="title" placeholder="НАЗВАНИЕ ОБЪЕКТА" value="БЕЛАЯ РУБАШКА">
         </div>
 
-        <div class="field">
-          <label>Подзаголовок</label>
-          <input type="text" id="subtitle" placeholder="Хлопок 100%" value="Хлопок 100%">
+        <!-- Fields for fashion-model -->
+        <div id="fields-fashion">
+          <div class="field">
+            <label>Преимущество 1 (бейдж сверху)</label>
+            <input type="text" id="advantage1" placeholder="Натуральный хлопок" value="Натуральный хлопок">
+          </div>
+          <div class="field">
+            <label>Преимущество 2 (бейдж снизу)</label>
+            <input type="text" id="advantage2" placeholder="Премиум качество" value="Премиум качество">
+          </div>
+        </div>
+
+        <!-- Fields for other templates -->
+        <div id="fields-default" class="hidden">
+          <div class="field">
+            <label>Подзаголовок</label>
+            <input type="text" id="subtitle" placeholder="Хлопок 100%">
+          </div>
         </div>
 
         <div class="field">
           <label>Акцентный цвет</label>
           <div class="color-field">
-            <input type="color" id="accentColorPicker" value="#4a6741">
-            <input type="text" id="accentColor" placeholder="#4a6741" value="#4a6741">
+            <input type="color" id="accentColorPicker" value="#dcc7aa">
+            <input type="text" id="accentColor" placeholder="#dcc7aa" value="#dcc7aa">
           </div>
         </div>
 
@@ -438,51 +439,8 @@
 
       <div class="panel" style="margin-top: 16px;">
         <div class="panel-title">Характеристики</div>
-        <div class="features-list" id="featuresList">
-          <div class="feature-row">
-            <select>
-              <option value="cotton">cotton</option>
-              <option value="scissors">scissors</option>
-              <option value="size">size</option>
-              <option value="safety">safety</option>
-              <option value="wash">wash</option>
-              <option value="eco">eco</option>
-              <option value="star">star</option>
-              <option value="delivery">delivery</option>
-            </select>
-            <input type="text" placeholder="Текст характеристики" value="Натуральный хлопок">
-            <button class="btn-remove" onclick="removeFeature(this)">&times;</button>
-          </div>
-          <div class="feature-row">
-            <select>
-              <option value="cotton">cotton</option>
-              <option value="scissors" selected>scissors</option>
-              <option value="size">size</option>
-              <option value="safety">safety</option>
-              <option value="wash">wash</option>
-              <option value="eco">eco</option>
-              <option value="star">star</option>
-              <option value="delivery">delivery</option>
-            </select>
-            <input type="text" placeholder="Текст характеристики" value="Свободный крой">
-            <button class="btn-remove" onclick="removeFeature(this)">&times;</button>
-          </div>
-          <div class="feature-row">
-            <select>
-              <option value="cotton">cotton</option>
-              <option value="scissors">scissors</option>
-              <option value="size">size</option>
-              <option value="safety">safety</option>
-              <option value="wash" selected>wash</option>
-              <option value="eco">eco</option>
-              <option value="star">star</option>
-              <option value="delivery">delivery</option>
-            </select>
-            <input type="text" placeholder="Текст характеристики" value="Машинная стирка">
-            <button class="btn-remove" onclick="removeFeature(this)">&times;</button>
-          </div>
-        </div>
-        <button class="btn-add" onclick="addFeature()">+ Добавить характеристику</button>
+        <div class="features-list" id="featuresList"></div>
+        <button class="btn-add" id="btnAddFeature">+ Добавить характеристику</button>
       </div>
 
       <button class="btn-generate" id="generateBtn" onclick="generate()">Сгенерировать</button>
@@ -509,12 +467,113 @@
 const iconOptions = ['cotton','scissors','size','safety','wash','eco','star','delivery'];
 let selectedTemplate = 'fashion-model';
 
+// Template configs
+const templateConfigs = {
+  'fashion-model': {
+    featuresWithIcons: false,
+    hasAdvantages: true,
+    hasSubtitle: false,
+    defaultColor: '#dcc7aa',
+    defaultFeatures: [
+      'Характеристика №1',
+      'Характеристика №2',
+      'Характеристика №3',
+      'Характеристика №4',
+      'Характеристика №5',
+    ],
+  },
+  'product-features': {
+    featuresWithIcons: true,
+    hasAdvantages: false,
+    hasSubtitle: true,
+    defaultColor: '#c4956a',
+    defaultFeatures: [
+      { icon: 'safety', text: 'Безопасно' },
+      { icon: 'eco', text: 'Экологично' },
+      { icon: 'star', text: 'Качество' },
+      { icon: 'delivery', text: 'Доставка' },
+    ],
+  },
+  'minimal-clean': {
+    featuresWithIcons: true,
+    hasAdvantages: false,
+    hasSubtitle: true,
+    defaultColor: '#4a6741',
+    defaultFeatures: [
+      { icon: 'star', text: 'Качество' },
+      { icon: 'eco', text: 'Натуральное' },
+      { icon: 'delivery', text: 'Доставка' },
+    ],
+  },
+};
+
+function switchTemplate(tmpl) {
+  selectedTemplate = tmpl;
+  const config = templateConfigs[tmpl];
+
+  // Toggle fields
+  document.getElementById('fields-fashion').classList.toggle('hidden', !config.hasAdvantages);
+  document.getElementById('fields-default').classList.toggle('hidden', !config.hasSubtitle);
+
+  // Update color
+  document.getElementById('accentColor').value = config.defaultColor;
+  document.getElementById('accentColorPicker').value = config.defaultColor;
+
+  // Rebuild features
+  rebuildFeatures(config);
+}
+
+function rebuildFeatures(config) {
+  const list = document.getElementById('featuresList');
+  list.innerHTML = '';
+  for (const f of config.defaultFeatures) {
+    if (config.featuresWithIcons) {
+      addFeatureWithIcon(f.icon, f.text);
+    } else {
+      addFeatureTextOnly(f);
+    }
+  }
+}
+
+function addFeatureWithIcon(icon, text) {
+  const list = document.getElementById('featuresList');
+  const row = document.createElement('div');
+  row.className = 'feature-row';
+  row.innerHTML = `
+    <select>${iconOptions.map(i => `<option value="${i}"${i === icon ? ' selected' : ''}>${i}</option>`).join('')}</select>
+    <input type="text" placeholder="Текст характеристики" value="${text || ''}">
+    <button class="btn-remove" onclick="this.closest('.feature-row').remove()">&times;</button>
+  `;
+  list.appendChild(row);
+}
+
+function addFeatureTextOnly(text) {
+  const list = document.getElementById('featuresList');
+  const row = document.createElement('div');
+  row.className = 'feature-row-text';
+  row.innerHTML = `
+    <input type="text" placeholder="Характеристика" value="${text || ''}">
+    <button class="btn-remove" onclick="this.closest('.feature-row-text').remove()">&times;</button>
+  `;
+  list.appendChild(row);
+}
+
+// Add feature button
+document.getElementById('btnAddFeature').addEventListener('click', () => {
+  const config = templateConfigs[selectedTemplate];
+  if (config.featuresWithIcons) {
+    addFeatureWithIcon('star', '');
+  } else {
+    addFeatureTextOnly('');
+  }
+});
+
 // Template selection
 document.querySelectorAll('.template-card').forEach(card => {
   card.addEventListener('click', () => {
     document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
     card.classList.add('active');
-    selectedTemplate = card.dataset.value;
+    switchTemplate(card.dataset.value);
   });
 });
 
@@ -548,30 +607,23 @@ imageInput.addEventListener('change', () => {
   reader.readAsDataURL(file);
 });
 
-function addFeature() {
-  const list = document.getElementById('featuresList');
-  const row = document.createElement('div');
-  row.className = 'feature-row';
-  row.innerHTML = `
-    <select>${iconOptions.map(i => `<option value="${i}">${i}</option>`).join('')}</select>
-    <input type="text" placeholder="Текст характеристики">
-    <button class="btn-remove" onclick="removeFeature(this)">&times;</button>
-  `;
-  list.appendChild(row);
-}
-
-function removeFeature(btn) {
-  btn.closest('.feature-row').remove();
-}
-
 function getFeatures() {
-  const rows = document.querySelectorAll('.feature-row');
+  const config = templateConfigs[selectedTemplate];
   const features = [];
-  rows.forEach(row => {
-    const icon = row.querySelector('select').value;
-    const text = row.querySelector('input').value.trim();
-    if (text) features.push({ icon, text });
-  });
+
+  if (config.featuresWithIcons) {
+    document.querySelectorAll('.feature-row').forEach(row => {
+      const icon = row.querySelector('select').value;
+      const text = row.querySelector('input').value.trim();
+      if (text) features.push({ icon, text });
+    });
+  } else {
+    document.querySelectorAll('.feature-row-text').forEach(row => {
+      const text = row.querySelector('input').value.trim();
+      if (text) features.push({ icon: '', text });
+    });
+  }
+
   return features;
 }
 
@@ -594,10 +646,19 @@ async function generate() {
   formData.append('image', file);
   formData.append('template', selectedTemplate);
   formData.append('title', document.getElementById('title').value);
-  formData.append('subtitle', document.getElementById('subtitle').value);
   formData.append('features', JSON.stringify(getFeatures()));
   formData.append('accentColor', document.getElementById('accentColor').value);
   formData.append('removeBg', document.getElementById('removeBg').checked ? 'true' : 'false');
+
+  // Template-specific fields
+  const config = templateConfigs[selectedTemplate];
+  if (config.hasAdvantages) {
+    formData.append('advantage1', document.getElementById('advantage1').value);
+    formData.append('advantage2', document.getElementById('advantage2').value);
+  }
+  if (config.hasSubtitle) {
+    formData.append('subtitle', document.getElementById('subtitle').value);
+  }
 
   const startTime = Date.now();
 
@@ -620,7 +681,7 @@ async function generate() {
       <div class="result-info">
         <span>${elapsed}с</span>
         <span>${sizeMb} MB</span>
-        <span>900×1200</span>
+        <span>900x1200</span>
       </div>
       <a class="btn-download" href="${url}" download="infographic.png">Скачать PNG</a>
     `;
@@ -637,6 +698,9 @@ function showError(msg) {
   el.textContent = msg;
   el.style.display = 'block';
 }
+
+// Init: build default features for fashion-model
+switchTemplate('fashion-model');
 </script>
 </body>
 </html>
