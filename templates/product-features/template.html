@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+{{{fontFaces}}}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: {{outputWidth}}px;
+  height: {{outputHeight}}px;
+  overflow: hidden;
+  font-family: 'Montserrat', 'Arial', sans-serif;
+}
+
+.canvas {
+  position: relative;
+  width: {{outputWidth}}px;
+  height: {{outputHeight}}px;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    {{accentColor}} 0%,
+    {{secondaryColor}} 60%,
+    {{accentColor}} 100%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Decorative circles */
+.deco-circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.06;
+  background: {{textColor}};
+}
+
+.deco-circle-1 {
+  width: 500px;
+  height: 500px;
+  top: -100px;
+  right: -100px;
+}
+
+.deco-circle-2 {
+  width: 300px;
+  height: 300px;
+  bottom: 100px;
+  left: -80px;
+}
+
+/* Frame */
+.frame {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  z-index: 1;
+}
+
+/* Title section */
+.title-section {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding-top: 60px;
+  padding-bottom: 20px;
+}
+
+.title-main {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 64px;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  color: {{textColor}};
+  text-transform: uppercase;
+  text-shadow: 2px 3px 6px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.subtitle {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: {{textColor}};
+  opacity: 0.75;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 12px;
+}
+
+/* Product image section */
+.product-section {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 40px;
+  min-height: 0;
+}
+
+.product-image {
+  max-width: 75%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.2));
+}
+
+.product-image-no-cutout {
+  max-width: 70%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Features bar at bottom */
+.features-bar {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 30px 50px 50px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.feature-column {
+  flex: 1;
+  max-width: 220px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.feature-number {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  color: {{textColor}};
+  opacity: 0.3;
+  line-height: 1;
+}
+
+.feature-icon {
+  width: 36px;
+  height: 36px;
+  filter: {{#if (eq textColor '#ffffff')}}brightness(10){{else}}brightness(0.2){{/if}};
+}
+
+.feature-icon-placeholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: {{textColor}};
+}
+
+.feature-text {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: {{textColor}};
+  line-height: 1.4;
+  opacity: 0.9;
+}
+</style>
+</head>
+<body>
+<div class="canvas">
+  <!-- Decorative elements -->
+  <div class="deco-circle deco-circle-1"></div>
+  <div class="deco-circle deco-circle-2"></div>
+  <div class="frame"></div>
+
+  <!-- Title -->
+  <div class="title-section">
+    <div class="title-main">{{title}}</div>
+    {{#if subtitle}}
+    <div class="subtitle">{{subtitle}}</div>
+    {{/if}}
+  </div>
+
+  <!-- Product image -->
+  <div class="product-section">
+    {{#if cutoutBase64}}
+    <img class="product-image" src="{{cutoutBase64}}" alt="Product">
+    {{else}}
+    <img class="product-image-no-cutout" src="{{originalBase64}}" alt="Product">
+    {{/if}}
+  </div>
+
+  <!-- Features bar -->
+  {{#if features.length}}
+  <div class="features-bar">
+    {{#each features}}
+    <div class="feature-column">
+      <div class="feature-number">0{{add @index 1}}</div>
+      {{#if this.iconSrc}}
+      <img class="feature-icon" src="{{this.iconSrc}}" alt="{{this.icon}}">
+      {{else}}
+      <div class="feature-icon-placeholder">✦</div>
+      {{/if}}
+      <div class="feature-text">{{this.text}}</div>
+    </div>
+    {{/each}}
+  </div>
+  {{/if}}
+</div>
+</body>
+</html>
