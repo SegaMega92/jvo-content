@@ -25,15 +25,13 @@ html, body {
   font-family: 'DM Sans', sans-serif;
 }
 
-/* z-index слои:
+/* z-index:
    1 — фон
-   2 — акцентная полоса
-   3 — заголовок + характеристики (ЗА моделью)
-   4 — фото модели (НАД текстом)
-   5 — бейджи преимуществ (самый верх)
+   3 — контент (текст + полосы) — ЗА моделью
+   4 — фото модели — НАД текстом
+   5 — бейджи преимуществ — самый верх
 */
 
-/* Бежевый фон */
 .bg {
   position: absolute;
   inset: 0;
@@ -41,74 +39,108 @@ html, body {
   z-index: 1;
 }
 
-/* Вертикальная акцентная полоса слева */
-.accent-bar {
-  position: absolute;
-  left: 0;
-  top: 73px;
-  bottom: 0;
-  width: 24px;
-  background: {{accentColor}};
-  z-index: 2;
-}
-
-/* Заголовок + характеристики — ЗА моделью */
+/* Контентная колонка — flex column с gap 36px */
 .content {
   position: absolute;
   left: 0;
   top: 73px;
-  width: 700px;
+  width: 840px;
+  height: 1041px;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 36px;
+  align-items: flex-start;
   z-index: 3;
 }
 
-.title-block {
+/* Каждая строка: полоса 24px + контент */
+.row {
   display: flex;
+  gap: 36px;
   align-items: center;
-  gap: 30px;
-}
-
-.title-bar {
-  width: 24px;
-  align-self: stretch;
-  background: {{accentColor}};
   flex-shrink: 0;
 }
 
+.row-full {
+  display: flex;
+  gap: 36px;
+  align-items: center;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+/* Полоска слева — self-stretch по высоте строки */
+.stripe {
+  width: 24px;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+.stripe-accent {
+  width: 24px;
+  flex-shrink: 0;
+  align-self: stretch;
+  background: {{accentColor}};
+}
+
+/* Полоса-заполнитель внизу — flex:1 */
+.stripe-fill {
+  width: 24px;
+  flex: 1 0 0;
+  min-height: 1px;
+  background: {{accentColor}};
+}
+
+/* Бейдж преимущества */
+.advantage-badge {
+  background: {{accentColor}};
+  padding: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.advantage-badge span {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  font-size: 30px;
+  color: #000;
+  letter-spacing: -1.2px;
+  white-space: nowrap;
+  line-height: 1;
+  font-variation-settings: 'opsz' 9;
+}
+
+/* Заголовок */
 .title-text {
   font-family: 'DM Sans', sans-serif;
   font-weight: 600;
-  font-size: 100px;
+  font-size: 120px;
   line-height: 0.98;
-  letter-spacing: -6px;
+  letter-spacing: -7.2px;
   text-transform: uppercase;
   color: #000201;
-  width: 650px;
-  word-break: break-word;
+  width: 780px;
+  flex-shrink: 0;
   font-variation-settings: 'opsz' 14;
 }
 
-.features-block {
-  display: flex;
-  align-items: flex-start;
-  gap: 30px;
-  padding-left: 54px;
-}
-
+/* Характеристики */
 .features-list {
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 16px;
+  width: 299px;
+  flex-shrink: 0;
 }
 
 .feature-item {
   font-family: 'DM Sans', sans-serif;
   font-weight: 400;
-  font-size: 22px;
+  font-size: 26px;
   color: #000;
-  letter-spacing: -0.88px;
+  letter-spacing: -1.04px;
   line-height: 1;
   font-variation-settings: 'opsz' 9;
 }
@@ -131,65 +163,46 @@ html, body {
   object-position: center;
 }
 
-/* Бейджи преимуществ — самый верх */
-.advantage-top {
-  position: absolute;
-  left: 54px;
-  top: 73px;
-  z-index: 5;
-}
-
-.advantage-badge {
-  background: {{accentColor}};
-  padding: 10px 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.advantage-badge span {
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 400;
-  font-size: 25px;
-  color: #000;
-  letter-spacing: -1px;
-  white-space: nowrap;
-  line-height: 1;
-  font-variation-settings: 'opsz' 9;
-}
-
+/* Преимущество №2 — снизу справа, самый верх */
 .advantage-bottom {
   position: absolute;
   right: 0;
-  bottom: 68px;
+  top: 1064px;
   z-index: 5;
 }
 
 .advantage-bottom .advantage-badge {
-  padding: 10px 50px 10px 14px;
+  padding: 10px 60px 10px 10px;
 }
 </style>
 </head>
 <body>
 <div class="canvas">
-  <!-- Layer 1: Фон -->
+  <!-- Фон -->
   <div class="bg"></div>
 
-  <!-- Layer 2: Акцентная полоса -->
-  <div class="accent-bar"></div>
-
-  <!-- Layer 3: Заголовок + характеристики (ЗА моделью) -->
+  <!-- Контент: полосы + текст (z-index 3, ЗА моделью) -->
   <div class="content">
+    <!-- Строка 1: спейсер + Преимущество №1 -->
     {{#if advantage1}}
-    <div style="height: 45px;"></div>
+    <div class="row">
+      <div class="stripe"></div>
+      <div class="advantage-badge" style="z-index: 5; position: relative;">
+        <span>{{advantage1}}</span>
+      </div>
+    </div>
     {{/if}}
-    <div class="title-block">
-      <div class="title-bar"></div>
+
+    <!-- Строка 2: акцентная полоса + Заголовок -->
+    <div class="row-full">
+      <div class="stripe-accent"></div>
       <div class="title-text">{{title}}</div>
     </div>
 
+    <!-- Строка 3: спейсер + Характеристики -->
     {{#if features.length}}
-    <div class="features-block">
+    <div class="row">
+      <div class="stripe"></div>
       <div class="features-list">
         {{#each features}}
         <div class="feature-item">{{this.text}}</div>
@@ -197,9 +210,12 @@ html, body {
       </div>
     </div>
     {{/if}}
+
+    <!-- Полоса-заполнитель до конца -->
+    <div class="stripe-fill"></div>
   </div>
 
-  <!-- Layer 4: Фото модели (НАД текстом) -->
+  <!-- Фото модели (z-index 4, НАД текстом) -->
   <div class="product-photo">
     {{#if cutoutBase64}}
     <img src="{{cutoutBase64}}" alt="Product">
@@ -208,15 +224,7 @@ html, body {
     {{/if}}
   </div>
 
-  <!-- Layer 5: Бейджи преимуществ (самый верх) -->
-  {{#if advantage1}}
-  <div class="advantage-top">
-    <div class="advantage-badge">
-      <span>{{advantage1}}</span>
-    </div>
-  </div>
-  {{/if}}
-
+  <!-- Преимущество №2 (z-index 5, самый верх) -->
   {{#if advantage2}}
   <div class="advantage-bottom">
     <div class="advantage-badge">
