@@ -64,14 +64,16 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
 
     const outputWidth = parseInt(req.body.outputWidth) || 1080;
     const outputHeight = parseInt(req.body.outputHeight) || 1350;
+    const removeBg = req.body.removeBg !== 'false' && req.body.removeBg !== '0';
 
     console.log(`\n=== Generating infographic ===`);
     console.log(`Template: ${template}`);
     console.log(`Title: ${title}`);
     console.log(`Output: ${outputWidth}x${outputHeight}`);
+    console.log(`Background removal: ${removeBg}`);
 
     // Process the image (background removal + color extraction)
-    const processed = await processImage(req.file.buffer, timings);
+    const processed = await processImage(req.file.buffer, timings, !removeBg);
 
     const accentColor = req.body.accentColor || processed.dominantColor;
     const secondaryColor = processed.palette[1] || adjustColor(accentColor, 30);

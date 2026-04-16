@@ -13,7 +13,8 @@ async function loadBackgroundRemoval() {
 
 export async function processImage(
   imageBuffer: Buffer,
-  timings: TimingLog[]
+  timings: TimingLog[],
+  skipBackgroundRemoval: boolean = false
 ): Promise<ProcessedImage> {
   const colorStart = Date.now();
   const { dominantColor, palette } = await extractColors(imageBuffer);
@@ -21,13 +22,17 @@ export async function processImage(
 
   let cutout: Buffer | null = null;
 
-  const bgStart = Date.now();
-  try {
-    cutout = await removeBackgroundFromImage(imageBuffer);
-    timings.push({ step: 'background_removal', durationMs: Date.now() - bgStart });
-  } catch (err) {
-    timings.push({ step: 'background_removal_failed', durationMs: Date.now() - bgStart });
-    console.error('Background removal failed, proceeding without cutout:', err);
+  if (!skipBackgroundRemoval) {
+    const bgStart = Date.now();
+    try {
+      cutout = await removeBackgroundFromImage(imageBuffer);
+      timings.push({ step: 'background_removal', durationMs: Date.now() - bgStart });
+    } catch (err) {
+      timings.push({ step: 'background_removal_failed', durationMs: Date.now() - bgStart });
+      console.error('Background removal failed, proceeding without cutout:', err);
+    }
+  } else {
+    timings.push({ step: 'background_removal_skipped', durationMs: 0 });
   }
 
   return {
