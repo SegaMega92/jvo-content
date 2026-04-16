@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import multer from 'multer';
 import { processImage } from './imageProcessor';
 import { renderTemplate, getAvailableTemplates } from './templateEngine';
@@ -7,6 +8,8 @@ import { Feature, GenerateRequest, TemplateData, TimingLog } from './types';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 const upload = multer({
   storage: multer.memoryStorage(),

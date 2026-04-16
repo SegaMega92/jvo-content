@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Инфографика — Генератор</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 36px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 28px;
+  }
+
+  .panel-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #aaa;
+    margin-bottom: 6px;
+  }
+
+  .field input[type="text"],
+  .field input[type="number"],
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 10px 14px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: #666;
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .field-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .color-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .color-field input[type="color"] {
+    width: 40px;
+    height: 36px;
+    border: 1px solid #333;
+    border-radius: 6px;
+    background: none;
+    cursor: pointer;
+    padding: 2px;
+  }
+
+  .color-field input[type="text"] {
+    flex: 1;
+  }
+
+  /* Upload area */
+  .upload-area {
+    border: 2px dashed #333;
+    border-radius: 10px;
+    padding: 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .upload-area:hover { border-color: #555; background: #1f1f1f; }
+  .upload-area.has-file { border-color: #4a9; border-style: solid; }
+
+  .upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .upload-icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+    opacity: 0.5;
+  }
+
+  .upload-text { font-size: 14px; color: #888; }
+  .upload-filename { font-size: 13px; color: #4a9; margin-top: 6px; font-weight: 500; }
+
+  .upload-preview {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    margin-top: 12px;
+    border-radius: 6px;
+  }
+
+  /* Features */
+  .features-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .feature-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 36px;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .feature-row select, .feature-row input {
+    padding: 8px 10px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #e0e0e0;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+  }
+
+  .btn-remove {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #333;
+    border-radius: 6px;
+    background: #111;
+    color: #888;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .btn-remove:hover { background: #2a1515; border-color: #a44; color: #e55; }
+
+  .btn-add {
+    margin-top: 8px;
+    padding: 8px 16px;
+    background: #1f1f1f;
+    border: 1px dashed #444;
+    border-radius: 6px;
+    color: #888;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+
+  .btn-add:hover { background: #252525; border-color: #666; color: #bbb; }
+
+  /* Checkbox */
+  .checkbox-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .checkbox-field input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #4a9;
+  }
+
+  .checkbox-field label {
+    font-size: 13px;
+    color: #aaa;
+    cursor: pointer;
+  }
+
+  /* Generate button */
+  .btn-generate {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #2d7a4f, #1a5c3a);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+
+  .btn-generate:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .btn-generate:active { transform: translateY(0); }
+  .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; filter: none; }
+
+  /* Result panel */
+  .result-panel { position: sticky; top: 24px; }
+
+  .result-placeholder {
+    border: 2px dashed #2a2a2a;
+    border-radius: 10px;
+    aspect-ratio: 1080/1350;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #444;
+    font-size: 14px;
+  }
+
+  .result-image {
+    width: 100%;
+    border-radius: 10px;
+    display: block;
+  }
+
+  .result-info {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .btn-download {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    background: #1f1f1f;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #ddd;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+
+  .btn-download:hover { background: #2a2a2a; border-color: #555; }
+
+  /* Loading */
+  .loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 15, 15, 0.85);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 10;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #333;
+    border-top-color: #4a9;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text { font-size: 14px; color: #888; }
+
+  .error-msg {
+    margin-top: 12px;
+    padding: 12px;
+    background: #2a1515;
+    border: 1px solid #5a2020;
+    border-radius: 8px;
+    color: #e88;
+    font-size: 13px;
+  }
+
+  .templates-preview {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .template-card {
+    padding: 12px;
+    background: #111;
+    border: 2px solid #333;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    font-size: 12px;
+    color: #aaa;
+  }
+
+  .template-card:hover { border-color: #555; }
+  .template-card.active { border-color: #4a9; color: #4a9; }
+
+  .template-card .name { font-weight: 600; font-size: 13px; margin-bottom: 4px; color: inherit; }
+  .template-card .desc { font-size: 11px; color: #666; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Генератор инфографик</h1>
+  <p class="subtitle">Создавайте карточки товаров для маркетплейсов</p>
+
+  <div class="layout">
+    <!-- Left: Form -->
+    <div>
+      <div class="panel">
+        <div class="panel-title">Изображение</div>
+        <div class="upload-area" id="uploadArea">
+          <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp">
+          <div class="upload-icon">&#128247;</div>
+          <div class="upload-text">Перетащите фото или нажмите для выбора</div>
+          <div class="upload-filename" id="fileName" style="display:none"></div>
+          <img id="imagePreview" class="upload-preview" style="display:none">
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top: 16px;">
+        <div class="panel-title">Шаблон</div>
+        <div class="templates-preview" id="templateCards">
+          <div class="template-card active" data-value="fashion-model">
+            <div class="name">Fashion Model</div>
+            <div class="desc">Текст за моделью</div>
+          </div>
+          <div class="template-card" data-value="product-features">
+            <div class="name">Product Features</div>
+            <div class="desc">Карточки характеристик</div>
+          </div>
+          <div class="template-card" data-value="minimal-clean">
+            <div class="name">Minimal Clean</div>
+            <div class="desc">Минималистичный</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top: 16px;">
+        <div class="panel-title">Контент</div>
+
+        <div class="field">
+          <label>Заголовок</label>
+          <input type="text" id="title" placeholder="БЕЛАЯ РУБАШКА" value="БЕЛАЯ РУБАШКА">
+        </div>
+
+        <div class="field">
+          <label>Подзаголовок</label>
+          <input type="text" id="subtitle" placeholder="Хлопок 100%" value="Хлопок 100%">
+        </div>
+
+        <div class="field">
+          <label>Акцентный цвет</label>
+          <div class="color-field">
+            <input type="color" id="accentColorPicker" value="#4a6741">
+            <input type="text" id="accentColor" placeholder="#4a6741" value="#4a6741">
+          </div>
+        </div>
+
+        <div class="field-row" style="margin-bottom: 18px;">
+          <div class="field">
+            <label>Ширина (px)</label>
+            <input type="number" id="outputWidth" value="1080" min="400" max="3000">
+          </div>
+          <div class="field">
+            <label>Высота (px)</label>
+            <input type="number" id="outputHeight" value="1350" min="400" max="3000">
+          </div>
+        </div>
+
+        <div class="checkbox-field">
+          <input type="checkbox" id="removeBg">
+          <label for="removeBg">Удалить фон (требует много RAM)</label>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top: 16px;">
+        <div class="panel-title">Характеристики</div>
+        <div class="features-list" id="featuresList">
+          <div class="feature-row">
+            <select>
+              <option value="cotton">cotton</option>
+              <option value="scissors">scissors</option>
+              <option value="size">size</option>
+              <option value="safety">safety</option>
+              <option value="wash">wash</option>
+              <option value="eco">eco</option>
+              <option value="star">star</option>
+              <option value="delivery">delivery</option>
+            </select>
+            <input type="text" placeholder="Текст характеристики" value="Натуральный хлопок">
+            <button class="btn-remove" onclick="removeFeature(this)">&times;</button>
+          </div>
+          <div class="feature-row">
+            <select>
+              <option value="cotton">cotton</option>
+              <option value="scissors" selected>scissors</option>
+              <option value="size">size</option>
+              <option value="safety">safety</option>
+              <option value="wash">wash</option>
+              <option value="eco">eco</option>
+              <option value="star">star</option>
+              <option value="delivery">delivery</option>
+            </select>
+            <input type="text" placeholder="Текст характеристики" value="Свободный крой">
+            <button class="btn-remove" onclick="removeFeature(this)">&times;</button>
+          </div>
+          <div class="feature-row">
+            <select>
+              <option value="cotton">cotton</option>
+              <option value="scissors">scissors</option>
+              <option value="size">size</option>
+              <option value="safety">safety</option>
+              <option value="wash" selected>wash</option>
+              <option value="eco">eco</option>
+              <option value="star">star</option>
+              <option value="delivery">delivery</option>
+            </select>
+            <input type="text" placeholder="Текст характеристики" value="Машинная стирка">
+            <button class="btn-remove" onclick="removeFeature(this)">&times;</button>
+          </div>
+        </div>
+        <button class="btn-add" onclick="addFeature()">+ Добавить характеристику</button>
+      </div>
+
+      <button class="btn-generate" id="generateBtn" onclick="generate()">Сгенерировать</button>
+    </div>
+
+    <!-- Right: Result -->
+    <div class="result-panel">
+      <div class="panel" style="position: relative;">
+        <div class="panel-title">Результат</div>
+        <div id="resultContainer">
+          <div class="result-placeholder">Загрузите фото и нажмите «Сгенерировать»</div>
+        </div>
+        <div id="loading" style="display:none" class="loading-overlay">
+          <div class="spinner"></div>
+          <div class="loading-text">Генерация...</div>
+        </div>
+        <div id="errorMsg" class="error-msg" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const iconOptions = ['cotton','scissors','size','safety','wash','eco','star','delivery'];
+let selectedTemplate = 'fashion-model';
+
+// Template selection
+document.querySelectorAll('.template-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    selectedTemplate = card.dataset.value;
+  });
+});
+
+// Color picker sync
+const colorPicker = document.getElementById('accentColorPicker');
+const colorInput = document.getElementById('accentColor');
+colorPicker.addEventListener('input', () => colorInput.value = colorPicker.value);
+colorInput.addEventListener('input', () => {
+  if (/^#[0-9a-fA-F]{6}$/.test(colorInput.value)) colorPicker.value = colorInput.value;
+});
+
+// Image preview
+const imageInput = document.getElementById('imageInput');
+const uploadArea = document.getElementById('uploadArea');
+
+imageInput.addEventListener('change', () => {
+  const file = imageInput.files[0];
+  if (!file) return;
+  uploadArea.classList.add('has-file');
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileName').style.display = 'block';
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('imagePreview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    document.querySelector('.upload-icon').style.display = 'none';
+    document.querySelector('.upload-text').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+});
+
+function addFeature() {
+  const list = document.getElementById('featuresList');
+  const row = document.createElement('div');
+  row.className = 'feature-row';
+  row.innerHTML = `
+    <select>${iconOptions.map(i => `<option value="${i}">${i}</option>`).join('')}</select>
+    <input type="text" placeholder="Текст характеристики">
+    <button class="btn-remove" onclick="removeFeature(this)">&times;</button>
+  `;
+  list.appendChild(row);
+}
+
+function removeFeature(btn) {
+  btn.closest('.feature-row').remove();
+}
+
+function getFeatures() {
+  const rows = document.querySelectorAll('.feature-row');
+  const features = [];
+  rows.forEach(row => {
+    const icon = row.querySelector('select').value;
+    const text = row.querySelector('input').value.trim();
+    if (text) features.push({ icon, text });
+  });
+  return features;
+}
+
+async function generate() {
+  const file = imageInput.files[0];
+  if (!file) {
+    showError('Выберите изображение');
+    return;
+  }
+
+  const btn = document.getElementById('generateBtn');
+  const loading = document.getElementById('loading');
+  const errorMsg = document.getElementById('errorMsg');
+
+  btn.disabled = true;
+  loading.style.display = 'flex';
+  errorMsg.style.display = 'none';
+
+  const formData = new FormData();
+  formData.append('image', file);
+  formData.append('template', selectedTemplate);
+  formData.append('title', document.getElementById('title').value);
+  formData.append('subtitle', document.getElementById('subtitle').value);
+  formData.append('features', JSON.stringify(getFeatures()));
+  formData.append('accentColor', document.getElementById('accentColor').value);
+  formData.append('outputWidth', document.getElementById('outputWidth').value);
+  formData.append('outputHeight', document.getElementById('outputHeight').value);
+  formData.append('removeBg', document.getElementById('removeBg').checked ? 'true' : 'false');
+
+  const startTime = Date.now();
+
+  try {
+    const response = await fetch('/api/generate', { method: 'POST', body: formData });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({ error: 'Ошибка сервера' }));
+      throw new Error(data.error || `HTTP ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    const sizeMb = (blob.size / 1024 / 1024).toFixed(2);
+
+    const container = document.getElementById('resultContainer');
+    container.innerHTML = `
+      <img class="result-image" src="${url}" alt="Результат">
+      <div class="result-info">
+        <span>${elapsed}с</span>
+        <span>${sizeMb} MB</span>
+        <span>${document.getElementById('outputWidth').value}×${document.getElementById('outputHeight').value}</span>
+      </div>
+      <a class="btn-download" href="${url}" download="infographic.png">Скачать PNG</a>
+    `;
+  } catch (err) {
+    showError(err.message);
+  } finally {
+    btn.disabled = false;
+    loading.style.display = 'none';
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+</script>
+</body>
+</html>
