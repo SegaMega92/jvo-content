@@ -17,346 +17,195 @@
   }
 
   .container {
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 40px 24px;
+    padding: 32px 24px;
   }
 
-  h1 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 8px;
-  }
-
-  .page-subtitle {
-    color: #888;
-    font-size: 14px;
-    margin-bottom: 36px;
-  }
+  h1 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .page-subtitle { color: #888; font-size: 13px; margin-bottom: 28px; }
 
   .layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
     align-items: start;
   }
 
-  @media (max-width: 800px) {
-    .layout { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
 
   .panel {
     background: #1a1a1a;
     border: 1px solid #2a2a2a;
-    border-radius: 12px;
-    padding: 28px;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 12px;
   }
 
-  .panel-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 20px;
-  }
+  .panel-title { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px; }
 
-  .field {
-    margin-bottom: 18px;
-  }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12px; font-weight: 500; color: #777; margin-bottom: 4px; }
 
-  .field label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: #aaa;
-    margin-bottom: 6px;
-  }
-
-  .field input[type="text"],
-  .field input[type="number"],
-  .field select,
-  .field textarea {
+  .field input[type="text"], .field select {
     width: 100%;
-    padding: 10px 14px;
+    padding: 8px 12px;
     background: #111;
     border: 1px solid #333;
-    border-radius: 8px;
+    border-radius: 6px;
     color: #e0e0e0;
-    font-size: 14px;
+    font-size: 13px;
     font-family: inherit;
     outline: none;
     transition: border-color 0.2s;
   }
+  .field input:focus, .field select:focus { border-color: #666; }
 
-  .field input:focus, .field select:focus, .field textarea:focus {
-    border-color: #666;
-  }
+  .color-field { display: flex; align-items: center; gap: 8px; }
+  .color-field input[type="color"] { width: 34px; height: 30px; border: 1px solid #333; border-radius: 4px; background: none; cursor: pointer; padding: 1px; }
+  .color-field input[type="text"] { flex: 1; }
 
-  .color-field {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .color-field input[type="color"] {
-    width: 40px;
-    height: 36px;
-    border: 1px solid #333;
-    border-radius: 6px;
-    background: none;
-    cursor: pointer;
-    padding: 2px;
-  }
-
-  .color-field input[type="text"] {
-    flex: 1;
-  }
-
-  /* Upload area */
+  /* Upload */
   .upload-area {
     border: 2px dashed #333;
-    border-radius: 10px;
-    padding: 32px;
+    border-radius: 8px;
+    padding: 20px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s;
     position: relative;
     overflow: hidden;
   }
-
   .upload-area:hover { border-color: #555; background: #1f1f1f; }
-  .upload-area.has-file { border-color: #4a9; border-style: solid; }
-
-  .upload-area input[type="file"] {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-    z-index: 10;
-  }
-
-  .upload-icon { font-size: 36px; margin-bottom: 8px; opacity: 0.5; }
-  .upload-text { font-size: 14px; color: #888; }
-  .upload-filename { font-size: 13px; color: #4a9; margin-top: 6px; font-weight: 500; }
-
-  .upload-preview {
-    max-width: 100%;
-    max-height: 200px;
-    object-fit: contain;
-    margin-top: 12px;
-    border-radius: 6px;
-  }
+  .upload-area.has-file { border-color: #4a9; border-style: solid; padding: 8px; }
+  .upload-area input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; }
+  .upload-icon { font-size: 28px; margin-bottom: 4px; opacity: 0.4; }
+  .upload-text { font-size: 12px; color: #666; }
+  .upload-preview { max-width: 100%; max-height: 120px; object-fit: contain; border-radius: 4px; }
 
   /* Features */
-  .features-list { display: flex; flex-direction: column; gap: 8px; }
-
-  /* With icon: icon select + text + remove */
-  .feature-row {
-    display: grid;
-    grid-template-columns: 120px 1fr 36px;
-    gap: 8px;
-    align-items: center;
+  .features-list { display: flex; flex-direction: column; gap: 6px; }
+  .feature-row { display: grid; grid-template-columns: 100px 1fr 30px; gap: 6px; align-items: center; }
+  .feature-row-text { display: grid; grid-template-columns: 1fr 30px; gap: 6px; align-items: center; }
+  .feature-row select, .feature-row input, .feature-row-text input {
+    padding: 6px 8px; background: #111; border: 1px solid #333; border-radius: 5px; color: #e0e0e0; font-size: 12px; font-family: inherit; outline: none;
   }
-
-  /* Text only: text + remove */
-  .feature-row-text {
-    display: grid;
-    grid-template-columns: 1fr 36px;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .feature-row select, .feature-row input,
-  .feature-row-text input {
-    padding: 8px 10px;
-    background: #111;
-    border: 1px solid #333;
-    border-radius: 6px;
-    color: #e0e0e0;
-    font-size: 13px;
-    font-family: inherit;
-    outline: none;
-  }
-
   .btn-remove {
-    width: 36px;
-    height: 36px;
-    border: 1px solid #333;
-    border-radius: 6px;
-    background: #111;
-    color: #888;
-    cursor: pointer;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
+    width: 30px; height: 30px; border: 1px solid #333; border-radius: 5px; background: #111; color: #666; cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
   }
-
   .btn-remove:hover { background: #2a1515; border-color: #a44; color: #e55; }
-
   .btn-add {
-    margin-top: 8px;
-    padding: 8px 16px;
-    background: #1f1f1f;
-    border: 1px dashed #444;
-    border-radius: 6px;
-    color: #888;
-    cursor: pointer;
-    font-size: 13px;
-    font-family: inherit;
-    transition: all 0.15s;
+    margin-top: 6px; padding: 6px 12px; background: #1f1f1f; border: 1px dashed #444; border-radius: 5px; color: #666; cursor: pointer; font-size: 12px; font-family: inherit;
   }
+  .btn-add:hover { background: #252525; border-color: #666; color: #aaa; }
 
-  .btn-add:hover { background: #252525; border-color: #666; color: #bbb; }
+  .checkbox-field { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .checkbox-field input[type="checkbox"] { width: 16px; height: 16px; accent-color: #4a9; }
+  .checkbox-field label { font-size: 12px; color: #777; cursor: pointer; }
 
-  /* Checkbox */
-  .checkbox-field {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 18px;
-  }
-
-  .checkbox-field input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: #4a9;
-  }
-
-  .checkbox-field label {
-    font-size: 13px;
-    color: #aaa;
-    cursor: pointer;
-  }
-
-  /* Generate button */
-  .btn-generate {
+  /* Buttons */
+  .btn-render {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     background: linear-gradient(135deg, #2d7a4f, #1a5c3a);
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     color: #fff;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
     transition: all 0.2s;
-    margin-top: 8px;
+  }
+  .btn-render:hover { filter: brightness(1.1); }
+  .btn-render:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Right panel — preview */
+  .preview-panel { position: sticky; top: 16px; }
+
+  .preview-frame-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 900/1200;
+    background: #111;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #2a2a2a;
   }
 
-  .btn-generate:hover { filter: brightness(1.1); transform: translateY(-1px); }
-  .btn-generate:active { transform: translateY(0); }
-  .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; filter: none; }
+  .preview-frame-wrapper iframe {
+    width: 900px;
+    height: 1200px;
+    border: none;
+    transform-origin: top left;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 
-  /* Result panel */
-  .result-panel { position: sticky; top: 24px; }
-
-  .result-placeholder {
-    border: 2px dashed #2a2a2a;
-    border-radius: 10px;
-    aspect-ratio: 900/1200;
+  .preview-hint {
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #444;
-    font-size: 14px;
+    font-size: 13px;
+    pointer-events: none;
   }
 
-  .result-image { width: 100%; border-radius: 10px; display: block; }
-
-  .result-info {
-    margin-top: 12px;
-    font-size: 12px;
-    color: #666;
+  .preview-actions {
+    margin-top: 10px;
     display: flex;
-    justify-content: space-between;
+    gap: 8px;
   }
 
   .btn-download {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    margin-top: 12px;
+    flex: 1;
+    padding: 10px;
     background: #1f1f1f;
     border: 1px solid #333;
-    border-radius: 8px;
+    border-radius: 6px;
     color: #ddd;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     font-family: inherit;
     cursor: pointer;
     text-align: center;
-    text-decoration: none;
     transition: all 0.15s;
   }
-
   .btn-download:hover { background: #2a2a2a; border-color: #555; }
+  .btn-download:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* Loading */
-  .loading-overlay {
+  .render-info { font-size: 11px; color: #555; margin-top: 8px; text-align: center; }
+
+  /* Loading overlay on preview */
+  .preview-loading {
     position: absolute;
     inset: 0;
-    background: rgba(15, 15, 15, 0.85);
-    border-radius: 10px;
+    background: rgba(0,0,0,0.5);
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    z-index: 10;
+    z-index: 5;
+    border-radius: 8px;
   }
-
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid #333;
-    border-top-color: #4a9;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+  .preview-loading .spinner {
+    width: 32px; height: 32px; border: 3px solid #333; border-top-color: #4a9; border-radius: 50%; animation: spin 0.8s linear infinite;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .loading-text { font-size: 14px; color: #888; }
+  .error-msg { margin-top: 8px; padding: 10px; background: #2a1515; border: 1px solid #5a2020; border-radius: 6px; color: #e88; font-size: 12px; }
 
-  .error-msg {
-    margin-top: 12px;
-    padding: 12px;
-    background: #2a1515;
-    border: 1px solid #5a2020;
-    border-radius: 8px;
-    color: #e88;
-    font-size: 13px;
-  }
-
-  .templates-preview {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 18px;
-  }
-
+  .templates-preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .template-card {
-    padding: 12px;
-    background: #111;
-    border: 2px solid #333;
-    border-radius: 8px;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-    font-size: 12px;
-    color: #aaa;
+    padding: 10px 8px; background: #111; border: 2px solid #333; border-radius: 6px; cursor: pointer; text-align: center; transition: all 0.15s; font-size: 11px; color: #aaa;
   }
-
   .template-card:hover { border-color: #555; }
   .template-card.active { border-color: #4a9; color: #4a9; }
-
-  .template-card .name { font-weight: 600; font-size: 13px; margin-bottom: 4px; color: inherit; }
-  .template-card .desc { font-size: 11px; color: #666; }
+  .template-card .name { font-weight: 600; font-size: 12px; margin-bottom: 2px; color: inherit; }
+  .template-card .desc { font-size: 10px; color: #555; }
 
   .hidden { display: none !important; }
 </style>
@@ -364,41 +213,40 @@
 <body>
 <div class="container">
   <h1>Генератор инфографик</h1>
-  <p class="page-subtitle">Создавайте карточки товаров для маркетплейсов</p>
+  <p class="page-subtitle">Живой превью — меняйте параметры и сразу видите результат</p>
 
   <div class="layout">
-    <!-- Left: Form -->
+    <!-- Left: Controls -->
     <div>
       <div class="panel">
         <div class="panel-title">Изображение</div>
         <div class="upload-area" id="uploadArea">
           <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp">
-          <div class="upload-icon">&#128247;</div>
-          <div class="upload-text">Перетащите фото или нажмите для выбора</div>
-          <div class="upload-filename" id="fileName" style="display:none"></div>
+          <div class="upload-icon" id="uploadIcon">&#128247;</div>
+          <div class="upload-text" id="uploadText">Нажмите для выбора фото</div>
           <img id="imagePreview" class="upload-preview" style="display:none">
         </div>
       </div>
 
-      <div class="panel" style="margin-top: 16px;">
+      <div class="panel">
         <div class="panel-title">Шаблон</div>
         <div class="templates-preview" id="templateCards">
           <div class="template-card active" data-value="fashion-model">
             <div class="name">Fashion Model</div>
-            <div class="desc">Журнальный стиль</div>
+            <div class="desc">Журнальный</div>
           </div>
           <div class="template-card" data-value="product-features">
-            <div class="name">Product Features</div>
-            <div class="desc">Карточки характеристик</div>
+            <div class="name">Product</div>
+            <div class="desc">Характеристики</div>
           </div>
           <div class="template-card" data-value="minimal-clean">
-            <div class="name">Minimal Clean</div>
-            <div class="desc">Минималистичный</div>
+            <div class="name">Minimal</div>
+            <div class="desc">Минимализм</div>
           </div>
         </div>
       </div>
 
-      <div class="panel" style="margin-top: 16px;">
+      <div class="panel">
         <div class="panel-title">Контент</div>
 
         <div class="field">
@@ -406,19 +254,17 @@
           <input type="text" id="title" placeholder="НАЗВАНИЕ ОБЪЕКТА" value="БЕЛАЯ РУБАШКА">
         </div>
 
-        <!-- Fields for fashion-model -->
         <div id="fields-fashion">
           <div class="field">
-            <label>Преимущество 1 (бейдж сверху)</label>
+            <label>Преимущество 1 (сверху)</label>
             <input type="text" id="advantage1" placeholder="Натуральный хлопок" value="Натуральный хлопок">
           </div>
           <div class="field">
-            <label>Преимущество 2 (бейдж снизу)</label>
+            <label>Преимущество 2 (снизу)</label>
             <input type="text" id="advantage2" placeholder="Премиум качество" value="Премиум качество">
           </div>
         </div>
 
-        <!-- Fields for other templates -->
         <div id="fields-default" class="hidden">
           <div class="field">
             <label>Подзаголовок</label>
@@ -433,34 +279,32 @@
             <input type="text" id="accentColor" placeholder="#dcc7aa" value="#dcc7aa">
           </div>
         </div>
-
-        <div class="checkbox-field">
-          <input type="checkbox" id="removeBg">
-          <label for="removeBg">Удалить фон (требует много RAM)</label>
-        </div>
       </div>
 
-      <div class="panel" style="margin-top: 16px;">
+      <div class="panel">
         <div class="panel-title">Характеристики</div>
         <div class="features-list" id="featuresList"></div>
-        <button class="btn-add" id="btnAddFeature">+ Добавить характеристику</button>
+        <button class="btn-add" id="btnAddFeature">+ Добавить</button>
       </div>
 
-      <button class="btn-generate" id="generateBtn" onclick="generate()">Сгенерировать</button>
+      <div class="panel">
+        <div class="panel-title">Экспорт</div>
+        <div class="checkbox-field">
+          <input type="checkbox" id="removeBg">
+          <label for="removeBg">Удалить фон при рендере</label>
+        </div>
+        <button class="btn-render" id="renderBtn">Скачать PNG (рендер)</button>
+        <div id="renderInfo" class="render-info"></div>
+        <div id="errorMsg" class="error-msg" style="display:none"></div>
+      </div>
     </div>
 
-    <!-- Right: Result -->
-    <div class="result-panel">
-      <div class="panel" style="position: relative;">
-        <div class="panel-title">Результат</div>
-        <div id="resultContainer">
-          <div class="result-placeholder">Загрузите фото и нажмите «Сгенерировать»</div>
-        </div>
-        <div id="loading" style="display:none" class="loading-overlay">
-          <div class="spinner"></div>
-          <div class="loading-text">Генерация...</div>
-        </div>
-        <div id="errorMsg" class="error-msg" style="display:none"></div>
+    <!-- Right: Live preview -->
+    <div class="preview-panel">
+      <div class="preview-frame-wrapper" id="previewWrapper">
+        <iframe id="previewFrame"></iframe>
+        <div class="preview-hint" id="previewHint">Заполните поля — превью появится автоматически</div>
+        <div class="preview-loading hidden" id="previewLoading"><div class="spinner"></div></div>
       </div>
     </div>
   </div>
@@ -469,72 +313,61 @@
 <script>
 const iconOptions = ['cotton','scissors','size','safety','wash','eco','star','delivery'];
 let selectedTemplate = 'fashion-model';
+let currentImageFile = null;
+let previewDebounceTimer = null;
 
-// Template configs
 const templateConfigs = {
   'fashion-model': {
     featuresWithIcons: false,
     hasAdvantages: true,
     hasSubtitle: false,
     defaultColor: '#dcc7aa',
-    defaultFeatures: [
-      'Характеристика №1',
-      'Характеристика №2',
-      'Характеристика №3',
-      'Характеристика №4',
-      'Характеристика №5',
-    ],
+    defaultFeatures: ['Характеристика №1','Характеристика №2','Характеристика №3','Характеристика №4','Характеристика №5'],
   },
   'product-features': {
     featuresWithIcons: true,
     hasAdvantages: false,
     hasSubtitle: true,
     defaultColor: '#c4956a',
-    defaultFeatures: [
-      { icon: 'safety', text: 'Безопасно' },
-      { icon: 'eco', text: 'Экологично' },
-      { icon: 'star', text: 'Качество' },
-      { icon: 'delivery', text: 'Доставка' },
-    ],
+    defaultFeatures: [{icon:'safety',text:'Безопасно'},{icon:'eco',text:'Экологично'},{icon:'star',text:'Качество'},{icon:'delivery',text:'Доставка'}],
   },
   'minimal-clean': {
     featuresWithIcons: true,
     hasAdvantages: false,
     hasSubtitle: true,
     defaultColor: '#4a6741',
-    defaultFeatures: [
-      { icon: 'star', text: 'Качество' },
-      { icon: 'eco', text: 'Натуральное' },
-      { icon: 'delivery', text: 'Доставка' },
-    ],
+    defaultFeatures: [{icon:'star',text:'Качество'},{icon:'eco',text:'Натуральное'},{icon:'delivery',text:'Доставка'}],
   },
 };
 
+// --- Scale iframe to fit container ---
+function scalePreview() {
+  const wrapper = document.getElementById('previewWrapper');
+  const iframe = document.getElementById('previewFrame');
+  const scale = wrapper.clientWidth / 900;
+  iframe.style.transform = `scale(${scale})`;
+  wrapper.style.height = `${1200 * scale}px`;
+}
+window.addEventListener('resize', scalePreview);
+
+// --- Template switching ---
 function switchTemplate(tmpl) {
   selectedTemplate = tmpl;
   const config = templateConfigs[tmpl];
-
-  // Toggle fields
   document.getElementById('fields-fashion').classList.toggle('hidden', !config.hasAdvantages);
   document.getElementById('fields-default').classList.toggle('hidden', !config.hasSubtitle);
-
-  // Update color
   document.getElementById('accentColor').value = config.defaultColor;
   document.getElementById('accentColorPicker').value = config.defaultColor;
-
-  // Rebuild features
   rebuildFeatures(config);
+  schedulePreview();
 }
 
 function rebuildFeatures(config) {
   const list = document.getElementById('featuresList');
   list.innerHTML = '';
   for (const f of config.defaultFeatures) {
-    if (config.featuresWithIcons) {
-      addFeatureWithIcon(f.icon, f.text);
-    } else {
-      addFeatureTextOnly(f);
-    }
+    if (config.featuresWithIcons) addFeatureWithIcon(f.icon, f.text);
+    else addFeatureTextOnly(f);
   }
 }
 
@@ -542,11 +375,9 @@ function addFeatureWithIcon(icon, text) {
   const list = document.getElementById('featuresList');
   const row = document.createElement('div');
   row.className = 'feature-row';
-  row.innerHTML = `
-    <select>${iconOptions.map(i => `<option value="${i}"${i === icon ? ' selected' : ''}>${i}</option>`).join('')}</select>
-    <input type="text" placeholder="Текст характеристики" value="${text || ''}">
-    <button class="btn-remove" onclick="this.closest('.feature-row').remove()">&times;</button>
-  `;
+  row.innerHTML = `<select>${iconOptions.map(i=>`<option value="${i}"${i===icon?' selected':''}>${i}</option>`).join('')}</select><input type="text" placeholder="Текст" value="${text||''}"><button class="btn-remove" onclick="this.closest('.feature-row').remove();schedulePreview()">&times;</button>`;
+  row.querySelector('input').addEventListener('input', schedulePreview);
+  row.querySelector('select').addEventListener('change', schedulePreview);
   list.appendChild(row);
 }
 
@@ -554,24 +385,19 @@ function addFeatureTextOnly(text) {
   const list = document.getElementById('featuresList');
   const row = document.createElement('div');
   row.className = 'feature-row-text';
-  row.innerHTML = `
-    <input type="text" placeholder="Характеристика" value="${text || ''}">
-    <button class="btn-remove" onclick="this.closest('.feature-row-text').remove()">&times;</button>
-  `;
+  row.innerHTML = `<input type="text" placeholder="Характеристика" value="${text||''}"><button class="btn-remove" onclick="this.closest('.feature-row-text').remove();schedulePreview()">&times;</button>`;
+  row.querySelector('input').addEventListener('input', schedulePreview);
   list.appendChild(row);
 }
 
-// Add feature button
 document.getElementById('btnAddFeature').addEventListener('click', () => {
   const config = templateConfigs[selectedTemplate];
-  if (config.featuresWithIcons) {
-    addFeatureWithIcon('star', '');
-  } else {
-    addFeatureTextOnly('');
-  }
+  if (config.featuresWithIcons) addFeatureWithIcon('star','');
+  else addFeatureTextOnly('');
+  schedulePreview();
 });
 
-// Template selection
+// --- Template card click ---
 document.querySelectorAll('.template-card').forEach(card => {
   card.addEventListener('click', () => {
     document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
@@ -580,80 +406,66 @@ document.querySelectorAll('.template-card').forEach(card => {
   });
 });
 
-// Color picker sync
+// --- Color sync ---
 const colorPicker = document.getElementById('accentColorPicker');
 const colorInput = document.getElementById('accentColor');
-colorPicker.addEventListener('input', () => colorInput.value = colorPicker.value);
+colorPicker.addEventListener('input', () => { colorInput.value = colorPicker.value; schedulePreview(); });
 colorInput.addEventListener('input', () => {
-  if (/^#[0-9a-fA-F]{6}$/.test(colorInput.value)) colorPicker.value = colorInput.value;
+  if (/^#[0-9a-fA-F]{6}$/.test(colorInput.value)) { colorPicker.value = colorInput.value; schedulePreview(); }
 });
 
-// Image preview
+// --- Image upload ---
 const imageInput = document.getElementById('imageInput');
-const uploadArea = document.getElementById('uploadArea');
-
 imageInput.addEventListener('change', () => {
   const file = imageInput.files[0];
   if (!file) return;
-  uploadArea.classList.add('has-file');
-  document.getElementById('fileName').textContent = file.name;
-  document.getElementById('fileName').style.display = 'block';
-
+  currentImageFile = file;
+  document.getElementById('uploadArea').classList.add('has-file');
   const reader = new FileReader();
   reader.onload = e => {
     const preview = document.getElementById('imagePreview');
     preview.src = e.target.result;
     preview.style.display = 'block';
-    document.querySelector('.upload-icon').style.display = 'none';
-    document.querySelector('.upload-text').style.display = 'none';
+    document.getElementById('uploadIcon').style.display = 'none';
+    document.getElementById('uploadText').style.display = 'none';
   };
   reader.readAsDataURL(file);
+  schedulePreview();
 });
 
+// --- Listen to all text inputs for live preview ---
+document.querySelectorAll('#title, #advantage1, #advantage2, #subtitle').forEach(el => {
+  el.addEventListener('input', schedulePreview);
+});
+
+// --- Get features ---
 function getFeatures() {
   const config = templateConfigs[selectedTemplate];
   const features = [];
-
   if (config.featuresWithIcons) {
     document.querySelectorAll('.feature-row').forEach(row => {
       const icon = row.querySelector('select').value;
       const text = row.querySelector('input').value.trim();
-      if (text) features.push({ icon, text });
+      if (text) features.push({icon, text});
     });
   } else {
     document.querySelectorAll('.feature-row-text').forEach(row => {
       const text = row.querySelector('input').value.trim();
-      if (text) features.push({ icon: '', text });
+      if (text) features.push({icon:'', text});
     });
   }
-
   return features;
 }
 
-async function generate() {
-  const file = imageInput.files[0];
-  if (!file) {
-    showError('Выберите изображение');
-    return;
-  }
-
-  const btn = document.getElementById('generateBtn');
-  const loading = document.getElementById('loading');
-  const errorMsg = document.getElementById('errorMsg');
-
-  btn.disabled = true;
-  loading.style.display = 'flex';
-  errorMsg.style.display = 'none';
-
+// --- Build form data ---
+function buildFormData() {
   const formData = new FormData();
-  formData.append('image', file);
+  if (currentImageFile) formData.append('image', currentImageFile);
   formData.append('template', selectedTemplate);
   formData.append('title', document.getElementById('title').value);
   formData.append('features', JSON.stringify(getFeatures()));
   formData.append('accentColor', document.getElementById('accentColor').value);
-  formData.append('removeBg', document.getElementById('removeBg').checked ? 'true' : 'false');
 
-  // Template-specific fields
   const config = templateConfigs[selectedTemplate];
   if (config.hasAdvantages) {
     formData.append('advantage1', document.getElementById('advantage1').value);
@@ -662,39 +474,77 @@ async function generate() {
   if (config.hasSubtitle) {
     formData.append('subtitle', document.getElementById('subtitle').value);
   }
+  return formData;
+}
+
+// --- Live preview ---
+function schedulePreview() {
+  clearTimeout(previewDebounceTimer);
+  previewDebounceTimer = setTimeout(updatePreview, 300);
+}
+
+async function updatePreview() {
+  const formData = buildFormData();
+  document.getElementById('previewHint').style.display = 'none';
+  document.getElementById('previewLoading').classList.remove('hidden');
+
+  try {
+    const resp = await fetch('/api/preview', { method: 'POST', body: formData });
+    if (!resp.ok) throw new Error('Preview failed');
+    const html = await resp.text();
+    const iframe = document.getElementById('previewFrame');
+    iframe.srcdoc = html;
+    iframe.onload = scalePreview;
+    scalePreview();
+  } catch(e) {
+    console.error('Preview error:', e);
+  } finally {
+    document.getElementById('previewLoading').classList.add('hidden');
+  }
+}
+
+// --- Render PNG ---
+document.getElementById('renderBtn').addEventListener('click', async () => {
+  if (!currentImageFile) {
+    showError('Сначала загрузите изображение');
+    return;
+  }
+
+  const btn = document.getElementById('renderBtn');
+  const infoEl = document.getElementById('renderInfo');
+  btn.disabled = true;
+  btn.textContent = 'Рендеринг...';
+  document.getElementById('errorMsg').style.display = 'none';
+
+  const formData = buildFormData();
+  formData.append('removeBg', document.getElementById('removeBg').checked ? 'true' : 'false');
 
   const startTime = Date.now();
 
   try {
-    const response = await fetch('/api/generate', { method: 'POST', body: formData });
-
-    if (!response.ok) {
-      const data = await response.json().catch(() => ({ error: 'Ошибка сервера' }));
-      throw new Error(data.error || `HTTP ${response.status}`);
+    const resp = await fetch('/api/generate', { method: 'POST', body: formData });
+    if (!resp.ok) {
+      const data = await resp.json().catch(() => ({error:'Ошибка'}));
+      throw new Error(data.error || `HTTP ${resp.status}`);
     }
-
-    const blob = await response.blob();
+    const blob = await resp.blob();
     const url = URL.createObjectURL(blob);
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     const sizeMb = (blob.size / 1024 / 1024).toFixed(2);
 
-    const container = document.getElementById('resultContainer');
-    container.innerHTML = `
-      <img class="result-image" src="${url}" alt="Результат">
-      <div class="result-info">
-        <span>${elapsed}с</span>
-        <span>${sizeMb} MB</span>
-        <span>900x1200</span>
-      </div>
-      <a class="btn-download" href="${url}" download="infographic.png">Скачать PNG</a>
-    `;
-  } catch (err) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'infographic.png';
+    a.click();
+
+    infoEl.textContent = `Готово: ${elapsed}с, ${sizeMb} MB, 900x1200`;
+  } catch(err) {
     showError(err.message);
   } finally {
     btn.disabled = false;
-    loading.style.display = 'none';
+    btn.textContent = 'Скачать PNG (рендер)';
   }
-}
+});
 
 function showError(msg) {
   const el = document.getElementById('errorMsg');
@@ -702,8 +552,9 @@ function showError(msg) {
   el.style.display = 'block';
 }
 
-// Init: build default features for fashion-model
+// --- Init ---
 switchTemplate('fashion-model');
+scalePreview();
 </script>
 </body>
 </html>

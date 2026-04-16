@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import multer from 'multer';
 import { processImage } from './imageProcessor';
-import { renderTemplate, getAvailableTemplates } from './templateEngine';
+import { renderTemplate, getAvailableTemplates, invalidateCache } from './templateEngine';
 import { renderHtmlToImage, initBrowser, closeBrowser } from './renderer';
 import { Feature, GenerateRequest, TemplateData, TimingLog } from './types';
 
@@ -29,6 +29,64 @@ app.get('/health', (_req, res) => {
 
 app.get('/api/templates', (_req, res) => {
   res.json({ templates: getAvailableTemplates() });
+});
+
+app.post('/api/preview', upload.single('image'), async (req, res) => {
+  try {
+    const template = req.body.template;
+    if (!template) {
+      res.status(400).json({ error: 'Template name is required' });
+      return;
+    }
+
+    const available = getAvailableTemplates();
+    if (!available.includes(template)) {
+      res.status(400).json({ error: `Template "${template}" not found` });
+      return;
+    }
+
+    const title = req.body.title || '';
+    const subtitle = req.body.subtitle || '';
+    const advantage1 = req.body.advantage1 || '';
+    const advantage2 = req.body.advantage2 || '';
+    let features: Feature[] = [];
+    try {
+      features = req.body.features ? JSON.parse(req.body.features) : [];
+    } catch {
+      features = [];
+    }
+
+    const accentColor = req.body.accentColor || '#dcc7aa';
+    const secondaryColor = adjustColor(accentColor, 30);
+    const textColor = isLightColor(accentColor) ? '#1a1a1a' : '#ffffff';
+
+    let originalBase64 = '';
+    if (req.file) {
+      originalBase64 = `data:image/${req.file.mimetype.split('/')[1]};base64,${req.file.buffer.toString('base64')}`;
+    }
+
+    const templateData: TemplateData = {
+      title,
+      subtitle,
+      advantage1,
+      advantage2,
+      features,
+      accentColor,
+      secondaryColor,
+      textColor,
+      cutoutBase64: null,
+      originalBase64,
+      outputWidth: 900,
+      outputHeight: 1200,
+    };
+
+    const html = renderTemplate(template, templateData);
+    res.set('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  } catch (err: any) {
+    console.error('Preview error:', err);
+    res.status(500).json({ error: err.message || 'Internal server error' });
+  }
 });
 
 app.post('/api/generate', upload.single('image'), async (req, res) => {
