@@ -65,8 +65,8 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
       return;
     }
 
-    const outputWidth = parseInt(req.body.outputWidth) || 1080;
-    const outputHeight = parseInt(req.body.outputHeight) || 1350;
+    const outputWidth = 900;
+    const outputHeight = 1200;
     const removeBg = req.body.removeBg !== 'false' && req.body.removeBg !== '0';
 
     console.log(`\n=== Generating infographic ===`);

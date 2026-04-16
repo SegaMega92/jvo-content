@@ -267,7 +267,7 @@
   .result-placeholder {
     border: 2px dashed #2a2a2a;
     border-radius: 10px;
-    aspect-ratio: 1080/1350;
+    aspect-ratio: 900/1200;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -427,17 +427,6 @@
           <div class="color-field">
             <input type="color" id="accentColorPicker" value="#4a6741">
             <input type="text" id="accentColor" placeholder="#4a6741" value="#4a6741">
-          </div>
-        </div>
-
-        <div class="field-row" style="margin-bottom: 18px;">
-          <div class="field">
-            <label>Ширина (px)</label>
-            <input type="number" id="outputWidth" value="1080" min="400" max="3000">
-          </div>
-          <div class="field">
-            <label>Высота (px)</label>
-            <input type="number" id="outputHeight" value="1350" min="400" max="3000">
           </div>
         </div>
 
@@ -608,8 +597,6 @@ async function generate() {
   formData.append('subtitle', document.getElementById('subtitle').value);
   formData.append('features', JSON.stringify(getFeatures()));
   formData.append('accentColor', document.getElementById('accentColor').value);
-  formData.append('outputWidth', document.getElementById('outputWidth').value);
-  formData.append('outputHeight', document.getElementById('outputHeight').value);
   formData.append('removeBg', document.getElementById('removeBg').checked ? 'true' : 'false');
 
   const startTime = Date.now();
@@ -633,7 +620,7 @@ async function generate() {
       <div class="result-info">
         <span>${elapsed}с</span>
         <span>${sizeMb} MB</span>
-        <span>${document.getElementById('outputWidth').value}×${document.getElementById('outputHeight').value}</span>
+        <span>900×1200</span>
       </div>
       <a class="btn-download" href="${url}" download="infographic.png">Скачать PNG</a>
     `;
