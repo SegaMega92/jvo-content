@@ -288,7 +288,8 @@
       </div>
 
       <div class="panel">
-        <div class="panel-title">Экспорт</div>
+        <div class="panel-title">Действия</div>
+        <button class="btn-render" id="previewBtn" style="background: linear-gradient(135deg, #3a6ea5, #2a5080); margin-bottom: 8px;">Обновить превью</button>
         <div class="checkbox-field">
           <input type="checkbox" id="removeBg">
           <label for="removeBg">Удалить фон при рендере</label>
@@ -303,7 +304,7 @@
     <div class="preview-panel">
       <div class="preview-frame-wrapper" id="previewWrapper">
         <iframe id="previewFrame"></iframe>
-        <div class="preview-hint" id="previewHint">Заполните поля — превью появится автоматически</div>
+        <div class="preview-hint" id="previewHint">Нажмите «Обновить превью»</div>
         <div class="preview-loading hidden" id="previewLoading"><div class="spinner"></div></div>
       </div>
     </div>
@@ -314,7 +315,6 @@
 const iconOptions = ['cotton','scissors','size','safety','wash','eco','star','delivery'];
 let selectedTemplate = 'fashion-model';
 let currentImageFile = null;
-let previewDebounceTimer = null;
 
 const templateConfigs = {
   'fashion-model': {
@@ -359,7 +359,6 @@ function switchTemplate(tmpl) {
   document.getElementById('accentColor').value = config.defaultColor;
   document.getElementById('accentColorPicker').value = config.defaultColor;
   rebuildFeatures(config);
-  schedulePreview();
 }
 
 function rebuildFeatures(config) {
@@ -375,9 +374,7 @@ function addFeatureWithIcon(icon, text) {
   const list = document.getElementById('featuresList');
   const row = document.createElement('div');
   row.className = 'feature-row';
-  row.innerHTML = `<select>${iconOptions.map(i=>`<option value="${i}"${i===icon?' selected':''}>${i}</option>`).join('')}</select><input type="text" placeholder="Текст" value="${text||''}"><button class="btn-remove" onclick="this.closest('.feature-row').remove();schedulePreview()">&times;</button>`;
-  row.querySelector('input').addEventListener('input', schedulePreview);
-  row.querySelector('select').addEventListener('change', schedulePreview);
+  row.innerHTML = `<select>${iconOptions.map(i=>`<option value="${i}"${i===icon?' selected':''}>${i}</option>`).join('')}</select><input type="text" placeholder="Текст" value="${text||''}"><button class="btn-remove" onclick="this.closest('.feature-row').remove()">&times;</button>`;
   list.appendChild(row);
 }
 
@@ -385,8 +382,7 @@ function addFeatureTextOnly(text) {
   const list = document.getElementById('featuresList');
   const row = document.createElement('div');
   row.className = 'feature-row-text';
-  row.innerHTML = `<input type="text" placeholder="Характеристика" value="${text||''}"><button class="btn-remove" onclick="this.closest('.feature-row-text').remove();schedulePreview()">&times;</button>`;
-  row.querySelector('input').addEventListener('input', schedulePreview);
+  row.innerHTML = `<input type="text" placeholder="Характеристика" value="${text||''}"><button class="btn-remove" onclick="this.closest('.feature-row-text').remove()">&times;</button>`;
   list.appendChild(row);
 }
 
@@ -394,7 +390,6 @@ document.getElementById('btnAddFeature').addEventListener('click', () => {
   const config = templateConfigs[selectedTemplate];
   if (config.featuresWithIcons) addFeatureWithIcon('star','');
   else addFeatureTextOnly('');
-  schedulePreview();
 });
 
 // --- Template card click ---
@@ -409,9 +404,9 @@ document.querySelectorAll('.template-card').forEach(card => {
 // --- Color sync ---
 const colorPicker = document.getElementById('accentColorPicker');
 const colorInput = document.getElementById('accentColor');
-colorPicker.addEventListener('input', () => { colorInput.value = colorPicker.value; schedulePreview(); });
+colorPicker.addEventListener('input', () => { colorInput.value = colorPicker.value; });
 colorInput.addEventListener('input', () => {
-  if (/^#[0-9a-fA-F]{6}$/.test(colorInput.value)) { colorPicker.value = colorInput.value; schedulePreview(); }
+  if (/^#[0-9a-fA-F]{6}$/.test(colorInput.value)) colorPicker.value = colorInput.value;
 });
 
 // --- Image upload ---
@@ -430,12 +425,6 @@ imageInput.addEventListener('change', () => {
     document.getElementById('uploadText').style.display = 'none';
   };
   reader.readAsDataURL(file);
-  schedulePreview();
-});
-
-// --- Listen to all text inputs for live preview ---
-document.querySelectorAll('#title, #advantage1, #advantage2, #subtitle').forEach(el => {
-  el.addEventListener('input', schedulePreview);
 });
 
 // --- Get features ---
@@ -477,11 +466,8 @@ function buildFormData() {
   return formData;
 }
 
-// --- Live preview ---
-function schedulePreview() {
-  clearTimeout(previewDebounceTimer);
-  previewDebounceTimer = setTimeout(updatePreview, 300);
-}
+// --- Preview by button ---
+document.getElementById('previewBtn').addEventListener('click', updatePreview);
 
 async function updatePreview() {
   const formData = buildFormData();
