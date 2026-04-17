@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layout Renderer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0a;
+    color: #d0d0d0;
+    min-height: 100vh;
+  }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    background: #111;
+    border-bottom: 1px solid #222;
+  }
+  .top-bar h1 { font-size: 16px; font-weight: 600; color: #fff; }
+  .top-bar a { color: #888; font-size: 13px; text-decoration: none; }
+  .top-bar a:hover { color: #aaa; }
+
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: calc(100vh - 49px);
+  }
+
+  @media (max-width: 1000px) {
+    .main { grid-template-columns: 1fr; height: auto; }
+  }
+
+  /* Left panel */
+  .editor {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #222;
+    overflow: hidden;
+  }
+
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid #222;
+    background: #111;
+  }
+  .tab {
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .tab:hover { color: #aaa; }
+  .tab.active { color: #4a9; border-bottom-color: #4a9; }
+
+  .tab-content { display: none; flex: 1; overflow: auto; }
+  .tab-content.active { display: flex; flex-direction: column; }
+
+  /* JSON tab */
+  .json-area {
+    flex: 1;
+    padding: 0;
+    position: relative;
+  }
+  .json-area textarea {
+    width: 100%;
+    height: 100%;
+    background: #0d0d0d;
+    color: #c8d6e5;
+    border: none;
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    tab-size: 2;
+  }
+
+  /* Prompt tab */
+  .prompt-area {
+    flex: 1;
+    padding: 16px;
+    overflow: auto;
+  }
+  .prompt-area pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #999;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .btn-copy-prompt {
+    margin-bottom: 12px;
+    padding: 8px 16px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: #aaa;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .btn-copy-prompt:hover { background: #252525; color: #ddd; }
+
+  /* Image upload */
+  .upload-strip {
+    padding: 12px 16px;
+    background: #111;
+    border-top: 1px solid #222;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .upload-strip label {
+    font-size: 12px;
+    color: #888;
+    white-space: nowrap;
+  }
+  .upload-strip input[type="file"] { font-size: 12px; color: #888; }
+  .upload-strip .thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #333;
+  }
+
+  /* Action bar */
+  .action-bar {
+    padding: 12px 16px;
+    background: #111;
+    border-top: 1px solid #222;
+    display: flex;
+    gap: 8px;
+  }
+  .btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-preview {
+    background: linear-gradient(135deg, #3a6ea5, #2a5080);
+    color: #fff;
+  }
+  .btn-preview:hover { filter: brightness(1.15); }
+  .btn-render {
+    background: linear-gradient(135deg, #2d7a4f, #1a5c3a);
+    color: #fff;
+  }
+  .btn-render:hover { filter: brightness(1.15); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
+
+  .error-bar {
+    padding: 8px 16px;
+    background: #2a1515;
+    border-top: 1px solid #5a2020;
+    color: #e88;
+    font-size: 12px;
+    display: none;
+  }
+
+  /* Right panel — preview */
+  .preview-panel {
+    background: #0d0d0d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: auto;
+  }
+
+  .preview-wrapper {
+    position: relative;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 6px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 900/1200;
+  }
+
+  .preview-wrapper iframe {
+    width: 900px;
+    height: 1200px;
+    border: none;
+    transform-origin: top left;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .preview-hint {
+    color: #333;
+    font-size: 13px;
+    text-align: center;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .preview-info {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #555;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>Layout Renderer</h1>
+  <a href="/">← Шаблоны</a>
+</div>
+
+<div class="main">
+  <!-- Left: editor -->
+  <div class="editor">
+    <div class="tabs">
+      <div class="tab active" data-tab="json">Layout JSON</div>
+      <div class="tab" data-tab="prompt">Промпт для AI</div>
+    </div>
+
+    <div class="tab-content active" id="tab-json">
+      <div class="json-area">
+        <textarea id="layoutJson" spellcheck="false" placeholder="Вставьте JSON от AI сюда...">{
+  "canvas": {
+    "width": 900,
+    "height": 1200,
+    "background": "#f5eedb"
+  },
+  "elements": [
+    {
+      "type": "rect",
+      "x": 60,
+      "y": 40,
+      "width": 240,
+      "height": 45,
+      "color": "#dcc7aa",
+      "label": "advantage-1",
+      "zIndex": 5
+    },
+    {
+      "type": "rect",
+      "x": 60,
+      "y": 120,
+      "width": 520,
+      "height": 200,
+      "color": "rgba(220, 199, 170, 0.5)",
+      "label": "title",
+      "zIndex": 2
+    },
+    {
+      "type": "image",
+      "x": 300,
+      "y": 80,
+      "width": 580,
+      "height": 1040,
+      "label": "product-photo",
+      "zIndex": 3
+    },
+    {
+      "type": "rect",
+      "x": 60,
+      "y": 420,
+      "width": 220,
+      "height": 28,
+      "color": "rgba(0,0,0,0.07)",
+      "label": "feature-1",
+      "zIndex": 2
+    },
+    {
+      "type": "rect",
+      "x": 60,
+      "y": 458,
+      "width": 200,
+      "height": 28,
+      "color": "rgba(0,0,0,0.07)",
+      "label": "feature-2",
+      "zIndex": 2
+    },
+    {
+      "type": "rect",
+      "x": 60,
+      "y": 496,
+      "width": 180,
+      "height": 28,
+      "color": "rgba(0,0,0,0.07)",
+      "label": "feature-3",
+      "zIndex": 2
+    },
+    {
+      "type": "rect",
+      "x": 620,
+      "y": 1080,
+      "width": 260,
+      "height": 45,
+      "color": "#dcc7aa",
+      "label": "advantage-2",
+      "zIndex": 5
+    }
+  ]
+}</textarea>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-prompt">
+      <div class="prompt-area">
+        <button class="btn-copy-prompt" id="btnCopyPrompt">Скопировать промпт</button>
+        <pre id="promptText"></pre>
+      </div>
+    </div>
+
+    <div class="upload-strip">
+      <label>Фото товара:</label>
+      <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp">
+      <img id="imageThumb" class="thumb" style="display:none">
+    </div>
+
+    <div class="error-bar" id="errorBar"></div>
+
+    <div class="action-bar">
+      <button class="btn btn-preview" id="btnPreview">Превью</button>
+      <button class="btn btn-render" id="btnRender">Скачать PNG</button>
+    </div>
+  </div>
+
+  <!-- Right: preview -->
+  <div class="preview-panel">
+    <div class="preview-wrapper" id="previewWrapper">
+      <iframe id="previewFrame"></iframe>
+      <div class="preview-hint" id="previewHint">Нажмите «Превью»</div>
+    </div>
+    <div class="preview-info" id="previewInfo"></div>
+  </div>
+</div>
+
+<script>
+// Tabs
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// Prompt text
+const PROMPT = `Проанализируй это изображение карточки товара для маркетплейса.
+
+Определи расположение всех визуальных блоков и верни JSON с координатами.
+
+Размер карточки: 900×1200 пикселей. Все координаты — в пикселях от верхнего-левого угла.
+
+Для каждого элемента укажи:
+- type: "rect" (для текстовых блоков, бейджей, декоративных элементов) или "image" (для фото товара)
+- x, y: координаты верхнего-левого угла
+- width, height: размер блока
+- label: семантическое название ("title", "advantage-1", "feature-1", "product-photo", "accent-bar")
+- color: цвет блока (hex или rgba)
+- zIndex: порядок наложения (фон=1, текст=2, фото=3, бейджи=5)
+
+Верни ТОЛЬКО валидный JSON:
+{
+  "canvas": { "width": 900, "height": 1200, "background": "#цвет_фона" },
+  "elements": [
+    { "type": "rect", "x": 0, "y": 0, "width": 100, "height": 50, "color": "#abc", "label": "title", "zIndex": 2 },
+    { "type": "image", "x": 0, "y": 0, "width": 100, "height": 100, "label": "product-photo", "zIndex": 3 }
+  ]
+}`;
+
+document.getElementById('promptText').textContent = PROMPT;
+document.getElementById('btnCopyPrompt').addEventListener('click', () => {
+  navigator.clipboard.writeText(PROMPT);
+  const btn = document.getElementById('btnCopyPrompt');
+  btn.textContent = 'Скопировано!';
+  setTimeout(() => btn.textContent = 'Скопировать промпт', 1500);
+});
+
+// Image upload
+let currentFile = null;
+document.getElementById('imageInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  currentFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const thumb = document.getElementById('imageThumb');
+    thumb.src = ev.target.result;
+    thumb.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+});
+
+// Scale iframe
+function scalePreview() {
+  const wrapper = document.getElementById('previewWrapper');
+  const iframe = document.getElementById('previewFrame');
+  const scale = wrapper.clientWidth / 900;
+  iframe.style.transform = `scale(${scale})`;
+  wrapper.style.height = `${1200 * scale}px`;
+}
+window.addEventListener('resize', scalePreview);
+
+function showError(msg) {
+  const bar = document.getElementById('errorBar');
+  bar.textContent = msg;
+  bar.style.display = 'block';
+  setTimeout(() => bar.style.display = 'none', 5000);
+}
+
+function getLayout() {
+  const raw = document.getElementById('layoutJson').value.trim();
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    showError('Невалидный JSON: ' + e.message);
+    return null;
+  }
+}
+
+// Preview
+document.getElementById('btnPreview').addEventListener('click', async () => {
+  const layout = getLayout();
+  if (!layout) return;
+
+  const formData = new FormData();
+  if (currentFile) formData.append('image', currentFile);
+  formData.append('layout', JSON.stringify(layout));
+  formData.append('mode', 'preview');
+
+  document.getElementById('previewHint').style.display = 'none';
+  const btn = document.getElementById('btnPreview');
+  btn.disabled = true;
+  btn.textContent = 'Загрузка...';
+
+  try {
+    const resp = await fetch('/api/render-layout', { method: 'POST', body: formData });
+    if (!resp.ok) {
+      const data = await resp.json().catch(() => ({ error: 'Ошибка' }));
+      throw new Error(data.error);
+    }
+    const html = await resp.text();
+    const iframe = document.getElementById('previewFrame');
+    iframe.srcdoc = html;
+    iframe.onload = scalePreview;
+    scalePreview();
+    document.getElementById('previewInfo').textContent =
+      `${layout.canvas.width}×${layout.canvas.height} | ${layout.elements.length} элементов`;
+  } catch (e) {
+    showError(e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Превью';
+  }
+});
+
+// Render PNG
+document.getElementById('btnRender').addEventListener('click', async () => {
+  const layout = getLayout();
+  if (!layout) return;
+
+  const formData = new FormData();
+  if (currentFile) formData.append('image', currentFile);
+  formData.append('layout', JSON.stringify(layout));
+
+  const btn = document.getElementById('btnRender');
+  btn.disabled = true;
+  btn.textContent = 'Рендер...';
+  const start = Date.now();
+
+  try {
+    const resp = await fetch('/api/render-layout', { method: 'POST', body: formData });
+    if (!resp.ok) {
+      const data = await resp.json().catch(() => ({ error: 'Ошибка' }));
+      throw new Error(data.error);
+    }
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'layout-render.png';
+    a.click();
+    const elapsed = ((Date.now() - start) / 1000).toFixed(1);
+    document.getElementById('previewInfo').textContent = `PNG скачан: ${elapsed}с, ${(blob.size/1024/1024).toFixed(2)} MB`;
+  } catch (e) {
+    showError(e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Скачать PNG';
+  }
+});
+
+scalePreview();
+</script>
+</body>
+</html>
