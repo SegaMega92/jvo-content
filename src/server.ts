@@ -5,6 +5,7 @@ import { processImage } from './imageProcessor';
 import { renderTemplate, getAvailableTemplates, invalidateCache } from './templateEngine';
 import { renderHtmlToImage, initBrowser, closeBrowser } from './renderer';
 import { Feature, GenerateRequest, TemplateData, TimingLog } from './types';
+import { buildLayoutHtml, LayoutInput } from './layoutRenderer';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -85,6 +86,68 @@ app.post('/api/preview', upload.single('image'), async (req, res) => {
     res.send(html);
   } catch (err: any) {
     console.error('Preview error:', err);
+    res.status(500).json({ error: err.message || 'Internal server error' });
+  }
+});
+
+// --- Layout-driven render ---
+
+app.use('/api/render-layout', express.json({ limit: '1mb' }));
+
+app.post('/api/render-layout', upload.single('image'), async (req, res) => {
+  const totalStart = Date.now();
+  const timings: TimingLog[] = [];
+
+  try {
+    let layout: LayoutInput;
+    try {
+      layout = typeof req.body.layout === 'string' ? JSON.parse(req.body.layout) : req.body.layout;
+      if (!layout && req.body.canvas) {
+        layout = { canvas: req.body.canvas, elements: req.body.elements };
+      }
+    } catch {
+      res.status(400).json({ error: 'Invalid layout JSON' });
+      return;
+    }
+
+    if (!layout || !layout.canvas || !layout.elements) {
+      res.status(400).json({ error: 'Layout must have canvas and elements' });
+      return;
+    }
+
+    let imageBase64: string | null = null;
+    if (req.file) {
+      imageBase64 = `data:image/${req.file.mimetype.split('/')[1]};base64,${req.file.buffer.toString('base64')}`;
+    }
+
+    console.log(`\n=== Layout render ===`);
+    console.log(`Canvas: ${layout.canvas.width}x${layout.canvas.height}`);
+    console.log(`Elements: ${layout.elements.length}`);
+
+    const html = buildLayoutHtml(layout, imageBase64);
+
+    const mode = req.query.mode || req.body.mode;
+    if (mode === 'preview') {
+      res.set('Content-Type', 'text/html; charset=utf-8');
+      res.send(html);
+      return;
+    }
+
+    const imageBuffer = await renderHtmlToImage(
+      html,
+      layout.canvas.width,
+      layout.canvas.height,
+      timings
+    );
+
+    timings.push({ step: 'total', durationMs: Date.now() - totalStart });
+    console.log('Timings:', timings.map((t) => `${t.step}: ${t.durationMs}ms`).join(', '));
+
+    res.set('Content-Type', 'image/png');
+    res.set('X-Processing-Time', String(Date.now() - totalStart));
+    res.send(imageBuffer);
+  } catch (err: any) {
+    console.error('Layout render error:', err);
     res.status(500).json({ error: err.message || 'Internal server error' });
   }
 });
